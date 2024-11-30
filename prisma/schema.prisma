@@ -7,9 +7,26 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-model Room {
+model User {
   id          Int      @id @default(autoincrement())
-  roomCode    String   @unique
-  displayName String?
-  createdAt   DateTime @default(now())
+  displayName String   @unique
+  players     Player[]
+  Room        Room[]
+}
+
+model Player {
+  id          Int    @id @default(autoincrement())
+  displayName String
+  userId      Int?
+  user        User?  @relation(fields: [userId], references: [id])
+  roomId      Int
+  room        Room   @relation(fields: [roomId], references: [id])
+}
+
+model Room {
+  id        Int      @id @default(autoincrement())
+  roomCode  String   @unique
+  creatorId Int?
+  creator   User?    @relation(fields: [creatorId], references: [id])
+  players   Player[]
 }
